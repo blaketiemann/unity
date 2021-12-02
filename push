@@ -18,45 +18,48 @@ start() {
 }
 
 copy_nukshuk() {
-  cp ~/nukshuk . -r
+  mkdir -p ./nukshuk
+
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql','Pods'} ~/nukshuk/ios ./nukshuk/ios -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/nukshuk/api ./nukshuk/api -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/nukshuk/coach ./nukshuk/coach -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/nukshuk/android ./nukshuk/android -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/nukshuk/nuknetwork ./nukshuk/nuknetwork -r
 }
 
 copy_studio() {
   mkdir -p ./studio
 
-  cp ~/studio/composelaravel ./studio/composelaravel -r
-  cp ~/studio/laravel-docker ./studio/laravel-docker -r
-  cp ~/studio/mastery ./studio/mastery -r
-  cp ~/studio/resume ./studio/resume -r
-  cp ~/studio/rxtest ./studio/rxtest -r
-  cp ~/studio/vuesandbox ./studio/vuesandbox -r
-  cp ~/studio/yieldable ./studio/yieldable -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/studio/laravel-docker ./studio/laravel-docker -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/studio/mastery ./studio/mastery -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/studio/rxtest ./studio/rxtest -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/studio/yieldable ./studio/yieldable -r
 }
 
 copy_library() {
-  cp ~/library . -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/library . -r
 }
 
 copy_ssh() {
-  cp ~/.ssh . -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.ssh . -r
 }
 
 copy_bash() {
   mkdir -p bash
-  cp ~/.bashrc bash
-  cp ~/.bash_aliases bash
-  cp ~/.bash_env bash
-  cp ~/.profile bash
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.bashrc bash
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.bash_aliases bash
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.bash_env bash
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.profile bash
 }
 
 copy_aws_global() {
-  cp ~/.aws . -r
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.aws . -r
 }
 
 copy_other() {
   mkdir -p other
-  cp ~/.config/user-dirs.dirs other
-  cp ~/.pgpass other
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.config/user-dirs.dirs other
+  rsync -rv --exclude={'node_modules','vendor','gradle','dist','.git','*.sql'} ~/.pgpass other
 }
 
 end() {
@@ -65,9 +68,9 @@ end() {
   echo "Creating ${archivefile}..."
   read -s -p "Enter Password: " password
   # zipping
-  zip -r -q $archivefile .aws .ssh bash library nukshuk other studio -P $password 2> /dev/null 
+  zip -r -q -5 $archivefile .aws .ssh bash library nukshuk other studio -P $password 2> /dev/null 
   # cleanup
-  rm .aws .ssh api bash library bin-local other -rf
+  rm .aws .ssh api bash library nukshuk other studio -rf
   # push
   git add .
   git commit -m $archivefile
