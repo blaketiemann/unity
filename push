@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+main() {
+  start
+  copy_library
+  copy_nukshuk
+  copy_studio
+  copy_ssh
+  copy_bash
+  copy_aws_global
+  copy_other
+  end
+}
+
+start() {
+  echo '---PUSHING UNITY---'
+  rm *.zip -rf
+}
+
+copy_nukshuk() {
+  cp ~/nukshuk . -r
+}
+
+copy_studio() {
+  mkdir -p ./studio
+
+  cp ~/studio/composelaravel ./studio/composelaravel -r
+  cp ~/studio/laravel-docker ./studio/laravel-docker -r
+  cp ~/studio/mastery ./studio/mastery -r
+  cp ~/studio/resume ./studio/resume -r
+  cp ~/studio/rxtest ./studio/rxtest -r
+  cp ~/studio/vuesandbox ./studio/vuesandbox -r
+  cp ~/studio/yieldable ./studio/yieldable -r
+}
+
+copy_library() {
+  cp ~/library . -r
+}
+
+copy_ssh() {
+  cp ~/.ssh . -r
+}
+
+copy_bash() {
+  mkdir -p bash
+  cp ~/.bashrc bash
+  cp ~/.bash_aliases bash
+  cp ~/.bash_env bash
+  cp ~/.profile bash
+}
+
+copy_aws_global() {
+  cp ~/.aws . -r
+}
+
+copy_other() {
+  mkdir -p other
+  cp ~/.config/user-dirs.dirs other
+  cp ~/.pgpass other
+}
+
+end() {
+  now=$(date +'%Y-%m-%d')
+  archivefile="archive_${now}.zip"
+  echo "Creating ${archivefile}..."
+  read -s -p "Enter Password: " password
+  # zipping
+  zip -r -q $archivefile .aws .ssh bash library nukshuk other studio -P $password 2> /dev/null 
+  # cleanup
+  rm .aws .ssh api bash library bin-local other -rf
+  # push
+  git add .
+  git commit -m $archivefile
+  git push
+}
+
+main

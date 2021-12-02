@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+main() {
+    echo "Installing..."
+    # getHomePath path
+    changeArchiveHomePath $path
+    echo $path
+}
+
+getHomePath() {
+    local val=$1
+
+    if [ -n "$path" ]; then
+        eval $val=$path; return
+    else
+        read -p "Enter/Confirm HOME path: " path
+    fi
+    
+
+    eval $val=$path; return
+}
+
+# TODO - make sed work
+# Details - sed replaces /home/kik with the $path given on all files
+changeArchiveHomePath() {
+    local path=$1
+
+
+    # Sorcery - https://stackoverflow.com/questions/8213328/store-the-output-of-find-command-in-an-array/8213509
+    files=()
+    while IFS= read -d $'\0' -r file; do
+        files=("${files[@]}" "$file")
+        if [[ -f $file ]]; then
+            sed -i 's#/home/blake#/home/blake#g' $file 2> /dev/null
+        fi
+    done < <(find . -type f -not -path ${0##*/} -print0)/
+}
+
+main

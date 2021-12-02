@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+main() {
+  start
+  setup_temp
+  pull_bash # bash is first so commands can be used
+  pull_aws
+  pull_ssh
+  pull_api
+  pull_library
+  pull_bin_local
+  pull_other
+  end
+}
+
+start() {
+  echo '---PULLING UNITY---'
+  git pull
+  unzip *.zip
+}
+
+setup_temp() {
+  mkdir -b temp
+}
+
+pull_bash() {
+  cp bash/.bash_aliases ~
+  cp bash/.bash_env ~
+  cp bash/.bashrc ~
+  cp bash/.profile ~
+  source ~/.bashrc
+}
+
+pull_aws() {
+  mv .aws ~/.aws -f
+  # pull_aws_cli
+  # pull_eb_cli
+}
+
+pull_aws_cli() {
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "./temp/awscliv2.zip"
+  unzip ./temp/awscliv2.zip
+  sudo ./temp/aws/install
+  aws --version
+}
+
+pull_eb_cli() {
+  sudo apt-get update
+  sudo apt-get install build-essential zlib1g-dev libssl-dev libncurses-dev libffi-dev libsqlite3-dev libreadline-dev libbz2-dev
+  git clone https://github.com/aws/aws-elastic-beanstalk-cli-setup.git temp
+  ./temp/aws-elastic-beanstalk-cli-setup/scripts/bundled_installer
+}
+
+pull_ssh() {
+  cp .ssh/* ~/.ssh -rf
+}
+
+pull_library() {
+  cp library/* ~/library -rf
+}
+
+pull_api() {
+  # eb configuration
+  cp api/.ebconfig ~/studio/nukshuk/api -rf
+  cp api/.ebextensions ~/studio/nukshuk/api -rf
+  cp api/.elasticbeanstalk ~/studio/nukshuk/api -rf
+  cp api/cron.yaml ~/studio/nukshuk/api 2> /dev/null
+  cp api/.cron.yaml ~/studio/nukshuk/api 2> /dev/null
+  # env
+  cp api/.env ~/studio/nukshuk/api
+}
+
+pull_bin_local() {
+  mv bin-local/nukshuk /usr/local/bin -f
+  mv bin-local/nuk_ip /usr/local/bin -f
+  mv bin-local/nuk_open /usr/local/bin -f
+  mv bin-local/nuk_say /usr/local/bin -f
+  mv bin-local/nuk_db /usr/local/bin -f
+}
+
+pull_other() {
+  cp other/user-dirs.dirs ~/.config -rf
+  mv other/.pgpass ~ -f
+}
+
+end() {
+  # cleanup
+  rm .aws .ssh api bash library other bin-local -rf
+  rm temp -rf
+}
+
+main

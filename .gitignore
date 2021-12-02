@@ -1,0 +1,7 @@
+# Ignore Self
+**/unity
+
+# Ignore Project Folders
+**/.git
+**/vendor
+**/node_modules
